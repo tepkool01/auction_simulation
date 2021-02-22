@@ -74,6 +74,8 @@ func (a *Auction) Run(bidWarStrategy BidWarStrategy) {
 					// No one has bid for this item, if they want it, they can have it
 					itemListing.HighestBidder = &itemBid
 					itemListing.SetBidPrice(itemBid.GetStartingBid())
+
+					printBidAction(&itemBid, itemListing.ItemListing, itemBid.GetStartingBid())
 				} else {
 					// Executing the bid war based on the selected strategy
 					bidWarStrategy.Fight(itemListing.HighestBidder, &itemBid, itemListing.ItemListing)
@@ -106,21 +108,6 @@ func (a *Auction) Run(bidWarStrategy BidWarStrategy) {
 	}
 }
 
-// PrintResults sends the results of the auction to the console
-func (a *Auction) PrintResults() {
-	fmt.Println("====================RESULTS====================")
-	for _, item := range a.GetListingStatuses() {
-		fmt.Printf("Item: %s (%s) - Amount: $%d - User: %s (%s)\n",
-			item.ItemListing.GetName(),
-			item.ItemListing.GetID(),
-			item.BidPrice,
-			item.HighestBidder.GetName(),
-			item.HighestBidder.GetID(),
-		)
-	}
-	fmt.Println("====================+++++++====================")
-}
-
 // GetListingStatuses returns a map of the current results of the auction
 func (a *Auction) GetListingStatuses() map[string]*model.ListingStatus {
 	return a.ListingStatuses
@@ -141,6 +128,25 @@ func (a *Auction) GetItems() []model.Item {
 	return a.Items
 }
 
+// PrintResults sends the results of the auction to the console
+func (a *Auction) PrintResults() {
+	fmt.Println("\n\n====================RESULTS====================")
+	for _, item := range a.GetListingStatuses() {
+		fmt.Printf("Item: %s (%s) - Amount: $%d - User: %s (%s)\n",
+			item.ItemListing.GetName(),
+			item.ItemListing.GetID(),
+			item.BidPrice,
+			item.HighestBidder.GetName(),
+			item.HighestBidder.GetID(),
+		)
+	}
+	fmt.Println("====================+++++++====================")
+}
+
 func printBidWarResult(winner *model.ItemBid, item *model.ItemListing, bidPrice int) {
 	fmt.Printf("Item Contended: %s bid $%d for the %s and is the current highest bidder!\n", winner.GetName(), bidPrice, item.GetName())
+}
+
+func printBidAction(user *model.ItemBid, item *model.ItemListing, bidPrice int) {
+	fmt.Printf("Bid Action: %s bid $%d for the %s and is the current highest bidder!\n", user.GetName(), bidPrice, item.GetName())
 }

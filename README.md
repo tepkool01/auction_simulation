@@ -45,3 +45,4 @@ an actual auction system. I think internal clients would be fine, followed by it
 4. Logging -- Debug logs around the system to diagnose issues 
 5. Testing -- Improve fail cases, improve coverage, particularly branch coverage
 6. Structure -- Improve folder structure to scale out the system better
+7. [Possibly] a separate class to handle all text and saving that into a template file
