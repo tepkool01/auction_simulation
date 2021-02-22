@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// getArrayFromFile is a reusable function to extract a JSON Array containing map files from a specified file
 func getArrayFromFile(filePath string) ([]map[string]interface{}, error) {
 	// Opening and reading the file into a byte array
 	jsonFile, err := os.Open(filePath)
