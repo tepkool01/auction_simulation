@@ -14,11 +14,11 @@ And run it from the command line. Check the docs later for explanation on how to
 - `/auction` is where the core package is located. This includes the models, interfaces, tests, and test data (yes, golang likes their tests adjacent to the code)
   - for the most part, the interesting concrete 'class' is `auction.go`
 - `/auction/model` where the models (bids, item listings, type enums) is located
-- `/artifacts` is the location of a linux and windows binary to run this (additional OSs on request)
+- `/artifacts` is the location of a linux and windows binary to run this (additional OSs on request), as well as the workerpool implementation/template (didn't make it in), and architecture diagrams.
 
 ## Pre-Requisites
 - Golang installed, currently using: **go 1.14.11** windows/amd64 in Jetbrains Goland IDE
-- A basic understanding of how to install Go, configure your GOPATH, etc is useful
+- A basic understanding of how to install Go, configure your GOPATH, etc, is useful
 
 ## Installation
 1. Make sure this folder is somewhere under your GOPATH (environment variable)
@@ -58,7 +58,7 @@ an actual auction system. I think internal clients would be fine, followed by it
 2. Concurrency -- there's a job-worker pattern I use all the time that I put into `artifacts/workerpool.go`, but there was some confusion on my end at the concurrency requirement for this assignment.
 3. Usability -- better documentation, better error messages to help guide users
 4. Logging -- Debug logs around the system to diagnose issues 
-5. Testing -- Improve fail cases, improve coverage, particularly branch coverage
+5. Testing -- Improve fail cases, improve coverage (currently at 97%), particularly branch coverage
    - Possibly system/stress testing if multiple files were introduced
 6. Structure -- Improve folder structure to scale out the system better
 7. [Possibly] a separate class to handle all text and saving that into a template file
