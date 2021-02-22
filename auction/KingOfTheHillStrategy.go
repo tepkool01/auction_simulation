@@ -55,9 +55,9 @@ func (k *KingOfTheHillStrategy) GetHighestBid() int {
 
 // computeTrueMax resolves the 'true' max bid, because some max bids are not obtainable with certain increments, i.e. max bid of 10 with increment of 3
 func (k *KingOfTheHillStrategy) computeTrueMax(user *model.ItemBid) int {
-	remainder := (user.MaxBid - user.StartingBid) % user.BidIncrement
+	remainder := (user.GetMaxBid() - user.GetStartingBid()) % user.GetBidIncrement()
 	if remainder == 0 {
-		return user.MaxBid
+		return user.GetMaxBid()
 	}
-	return user.MaxBid - remainder
+	return user.GetMaxBid() - remainder
 }

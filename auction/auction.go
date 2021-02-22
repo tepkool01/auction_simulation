@@ -41,11 +41,7 @@ func NewAuction(filePath string, ingestionRate int) (*Auction, error) {
 		if item["type"] == model.LISTING.String() {
 			auctionItemType = model.ItemListing{}
 		}
-		err = mapstructure.Decode(item, &auctionItemType)
-		if err != nil {
-			log.Println("item failed to unmarshal into struct")
-			return nil, err
-		}
+		_ = mapstructure.Decode(item, &auctionItemType)
 
 		// Validate struct is valid before adding it to the slice
 		err := v.Struct(auctionItemType)
@@ -114,7 +110,13 @@ func (a *Auction) Run(bidWarStrategy BidWarStrategy) {
 func (a *Auction) PrintResults() {
 	fmt.Println("====================RESULTS====================")
 	for _, item := range a.GetListingStatuses() {
-		fmt.Printf("%s - %d - %s\n", item.ItemListing.GetName(), item.BidPrice, item.HighestBidder.GetName())
+		fmt.Printf("Item: %s (%s) - Amount: $%d - User: %s (%s)\n",
+			item.ItemListing.GetName(),
+			item.ItemListing.GetID(),
+			item.BidPrice,
+			item.HighestBidder.GetName(),
+			item.HighestBidder.GetID(),
+		)
 	}
 	fmt.Println("====================+++++++====================")
 }
