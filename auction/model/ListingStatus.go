@@ -2,31 +2,27 @@ package model
 
 import "time"
 
+// ListingStatus provides the current bidding status for a single item
 type ListingStatus struct {
-	ItemListing *ItemListing
+	ItemListing   *ItemListing
 	HighestBidder *ItemBid
-	BidPrice int
-	StartTime int
+	BidPrice      int
+	StartTime     int
 }
 
-//func NewListingStatus(listing *ItemListing, bidder *ItemBid) *ListingStatus {
-//	return &ListingStatus{
-//		ItemListing:   listing,
-//		HighestBidder: bidder,
-//		StartTime:     int(time.Now().Unix()),
-//	}
-//}
-
+// SetHighestBidder sets the user object for highest bidder
 func (s *ListingStatus) SetHighestBidder(bidder *ItemBid) {
 	s.HighestBidder = bidder
 }
 
+// SetBidPrice sets the current highest bid price for this item
 func (s *ListingStatus) SetBidPrice(price int) {
 	s.BidPrice = price
 }
 
+// IsClosed determines if the bidding for a particular item has been closed by expiration
 func (s *ListingStatus) IsClosed() bool {
-	return time.Now().Unix() > int64(s.StartTime + s.getTimeOfAuction())
+	return time.Now().Unix() > int64(s.StartTime+s.getTimeOfAuction())
 }
 
 func (s *ListingStatus) getTimeOfAuction() int {

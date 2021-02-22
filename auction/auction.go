@@ -2,10 +2,13 @@ package auction
 
 import (
 	"fmt"
-	"github.com/mitchellh/mapstructure"
 	"log"
-	"lookout_interview/auction/model"
 	"time"
+
+	"lookout_interview/auction/model"
+
+	"github.com/go-playground/validator"
+	"github.com/mitchellh/mapstructure"
 )
 
 // Auction is the implementation of running an auction and observing the results
@@ -16,32 +19,46 @@ type Auction struct {
 }
 
 // NewAuction instantiates a new auction with data from a JSON file and prepares entries as specific types
-func NewAuction(filePath string, ingestionRate int) *Auction {
+func NewAuction(filePath string, ingestionRate int) (*Auction, error) {
 	auction := new(Auction)
 	auction.SetIngestionRate(ingestionRate)
+
+	// Validator which checks for valid structs
+	v := validator.New()
 
 	// Retrieves the JSON array from the file as an anonymous type (interface) to be parsed later
 	rawItemArray, err := getArrayFromFile(filePath)
 	if err != nil {
-		return nil
+		log.Println("could not extract data from file. malformed or non-existent file")
+		return nil, err
 	}
 
 	// Iterating over the JSON data to create a more usable interaction with the items via defined structs
 	var auctionItemType model.Item
 	for _, item := range rawItemArray {
+		// Switching type based on type property to place it into the correct struct
 		auctionItemType = model.ItemBid{}
 		if item["type"] == model.LISTING.String() {
 			auctionItemType = model.ItemListing{}
 		}
 		err = mapstructure.Decode(item, &auctionItemType)
 		if err != nil {
-			log.Println("skipping item due to decoding failure")
-			continue
+			log.Println("item failed to unmarshal into struct")
+			return nil, err
 		}
+
+		// Validate struct is valid before adding it to the slice
+		err := v.Struct(auctionItemType)
+		if err != nil {
+			log.Println("item does not conform to prescribed specification")
+			return nil, err
+		}
+
+		// Add the items to the list!
 		auction.Items = append(auction.Items, auctionItemType)
 	}
 
-	return auction
+	return auction, nil
 }
 
 // Run starts the auction with a given bid war strategy

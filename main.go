@@ -2,11 +2,15 @@ package main
 
 import (
 	"flag"
+	"log"
 	Auction "lookout_interview/auction"
 )
 
-const DefaultAuctionItems = "auctionItems.json" // DefaultAuctionItems is the location of the file to ingest, this can be a full or relative path
-const DefaultIngestionRate = 1000               // DefaultIngestionRate is in milliseconds; 1000 ms is 1 second
+// DefaultAuctionItems is the location of the file to ingest, this can be a full or relative path
+const DefaultAuctionItems = "auctionItems.json"
+
+// DefaultIngestionRate is in milliseconds; 1000 ms is 1 second
+const DefaultIngestionRate = 1000
 
 func main() {
 	// Grab the flags from the CLI to determine the file path and ingestion rate
@@ -18,7 +22,10 @@ func main() {
 	kingOfTheHill := &Auction.KingOfTheHillStrategy{}
 
 	// Create a new auction instance, run the auction, and observe the results in the console
-	auction := Auction.NewAuction(*filePath, *ingestionRate)
+	auction, err := Auction.NewAuction(*filePath, *ingestionRate)
+	if err != nil {
+		log.Fatal("could not instantiate auction object")
+	}
 	auction.Run(kingOfTheHill)
 	auction.PrintResults()
 }
