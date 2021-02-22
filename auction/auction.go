@@ -1,7 +1,6 @@
 package auction
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -64,6 +63,7 @@ func (a *Auction) Run(bidWarStrategy BidWarStrategy) {
 
 	// Iterate over all of the items in the auction, at the set ingestion rate, and aggregate the results
 	for _, item := range a.GetItems() {
+		// Starting a timer to time the execution of the following block, which will be used to calculate the sleeping rate
 		executionStart := time.Now()
 
 		// Checking the most likely model first (bid)
@@ -96,8 +96,12 @@ func (a *Auction) Run(bidWarStrategy BidWarStrategy) {
 					HighestBidder: nil,
 					StartTime:     int(time.Now().Unix()),
 				}
+				log.Printf("New Item available for bidding: %s (%s)", itemListing.GetName(), itemListing.GetID())
 			}
 		}
+
+		// Print current status each event (per the requirements)
+		a.PrintResults()
 
 		// Factor in the above execution time to make the iterations consistently spaced
 		executionDuration := time.Since(executionStart)
@@ -106,6 +110,7 @@ func (a *Auction) Run(bidWarStrategy BidWarStrategy) {
 			time.Sleep(time.Duration(sleepTime) * time.Millisecond)
 		}
 	}
+	log.Println("Auction concluded")
 }
 
 // GetListingStatuses returns a map of the current results of the auction
@@ -130,23 +135,31 @@ func (a *Auction) GetItems() []model.Item {
 
 // PrintResults sends the results of the auction to the console
 func (a *Auction) PrintResults() {
-	fmt.Println("\n\n====================RESULTS====================")
+	log.Println("====================AUCTION LISTINGS====================")
 	for _, item := range a.GetListingStatuses() {
-		fmt.Printf("Item: %s (%s) - Amount: $%d - User: %s (%s)\n",
+		// Checking for nil pointers
+		bidderName := "N/A"
+		bidderID := "N/A"
+		if item.HighestBidder != nil {
+			bidderName = item.HighestBidder.GetName()
+			bidderID = item.HighestBidder.GetID()
+		}
+		log.Printf("Item: %s (%s) - Amount: $%d - User: %s (%s)\n",
 			item.ItemListing.GetName(),
 			item.ItemListing.GetID(),
 			item.BidPrice,
-			item.HighestBidder.GetName(),
-			item.HighestBidder.GetID(),
+			bidderName,
+			bidderID,
 		)
 	}
-	fmt.Println("====================+++++++====================")
+	log.Println("========================================================")
+	log.Println("")
 }
 
 func printBidWarResult(winner *model.ItemBid, item *model.ItemListing, bidPrice int) {
-	fmt.Printf("Item Contended: %s bid $%d for the %s and is the current highest bidder!\n", winner.GetName(), bidPrice, item.GetName())
+	log.Printf("Item Contended: %s bid $%d for the %s and is the current highest bidder!\n", winner.GetName(), bidPrice, item.GetName())
 }
 
 func printBidAction(user *model.ItemBid, item *model.ItemListing, bidPrice int) {
-	fmt.Printf("Bid Action: %s bid $%d for the %s and is the current highest bidder!\n", user.GetName(), bidPrice, item.GetName())
+	log.Printf("Bid Action: %s bid $%d for the %s and is the current highest bidder!\n", user.GetName(), bidPrice, item.GetName())
 }
