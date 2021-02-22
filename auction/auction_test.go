@@ -90,3 +90,10 @@ func TestAuction_RunFileFailures(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 }
+
+func TestListingStatusWithNil(t *testing.T) {
+	t.Parallel()
+
+	ls := model.ListingStatus{}
+	assert.Equal(t, true, ls.IsClosed())
+}

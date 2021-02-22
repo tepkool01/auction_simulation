@@ -1,6 +1,6 @@
 package model
 
-// ItemBid struct which are similar to properties of a class. This also has the added benefit of running built-in validation
+// ItemBid struct which are similar to properties of a class. This also has the added benefit of running built-in validation = https://pkg.go.dev/gopkg.in/go-playground/validator.v9
 type ItemBid struct {
 	ID           string `json:"id" validate:"ascii,required"`
 	Type         string `json:"type" validate:"ascii,required,oneof=bid newItem"`
